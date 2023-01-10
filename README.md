@@ -1,7 +1,7 @@
 # Samurai game
-Another version of the Asteroids game idea, originally made by @vkomianos. Developed for the <a href="https://avarts.ionio.gr/en/studies/undergraduate/courses-descriptions/ava341/" target="_blank">Interactive Multimedia course</a> at the Dept. of <a href="https://avarts.ionio.gr" target="_blank">Audio and Visual Arts</a>, Corfu, Greece.
+Another version of the Asteroids game idea, originally made by <a href="https://github.com/vkomianos" target="_blank">@vkomianos</a>. Developed for the <a href="https://avarts.ionio.gr/en/studies/undergraduate/courses-descriptions/ava341/" target="_blank">Interactive Multimedia course</a> at the Dept. of <a href="https://avarts.ionio.gr" target="_blank">Audio and Visual Arts</a>, Corfu, Greece.
 
-![Gameplay](/docs/p5-asteroids-gameplay.gif)
+![Gameplay](/docs/samurai-gameplay.gif)
 
 ## Gameplay
 Player uses the left/right arrow of the PC's keyboard to move the samurai and avoid the dragons. The game becomes more difficult as player keeps playing by adding more dragons. Dragons have varying speed. The more dragons the player avoids and kills, the greater the score they get.
@@ -28,10 +28,10 @@ See js/game-code.js for more information.
 
 The folder game-assets contains the images and sounds used in the game.
 
-Find the original idea here: [repository] (https://github.com/vkomianos/p5-asteroids-game.git).
+Find the original idea here: https://github.com/vkomianos/p5-asteroids-game.git
 
 ## Play online
-You can play the game <a href="https://dimitris-thompoulos.github.io/samurai-game/index.html" target="new">online</a>.
+You can play the game <a href="https://dimitris-thomopoulos.github.io/samurai-game/index.html" target="new">online</a>.
 
 ## Libraries used
 The game uses the [p5 javascript library] (https://p5js.org/) and the [v1.5.0] (https://github.com/processing/p5.js/releases/download/v1.5.0/p5.min.js)is included in this project.
