@@ -16,8 +16,6 @@
 				this.maxSpeed = 12;
 				
 				this.image = dragonImage;
-				this.explosionSound = createAudio("game-assets/explosion-05.wav");
-				this.dragonKilled = createAudio("game-assets/dragon-kill.mp3");
 				this.explosionImage = loadImage("game-assets/blood-splatter.png");
 				this.load();
 			}
@@ -38,7 +36,7 @@
 			
 			display() 
 			{
-				image(this.image, this.x, this.y+= this.dragonSpeed); // each time an dragon is displyed its position is updated (dragons fall [y is increased])
+				image(this.image, this.x, this.y+= this.dragonSpeed); // each time a dragon is displayed its position is updated (dragons fall [y is increased])
 				if (this.y > 591) // dragon is dissappeared and load() is called to load again the dragon 
 				{
 					this.load();
@@ -51,35 +49,46 @@
 				if (!this.exploded) // each dragon can explode only once
 				{
 					this.exploded = true;		
+					this.explosionSoundPD();
 					return true; // if explode returns true player loses a life
+
 				}
 			}
 			
-			detonate()
+			kill()
 			{
 				if (!this.exploded) // each dragon can be killed only once
 				{
 					this.exploded = true;
 					this.x += 25;
 					this.image = this.explosionImage; // change the dragon image with explosion
-					this.dragonKilled.play(); // kill sound
-					
+					this.killSoundPD();
 					return true; 
 				}
+			}
+			
+			explosionSoundPD()
+			{
+				Pd.send('damage', []);
+			}
+			
+			killSoundPD()
+			{
+				Pd.send('kill', []);
 			}
 		}
 		
 		class ShurikenPack
 		{
 			//shurikenPacks = [];
-			
+
+			loadSound = "";
 			
 			constructor()
 			{
 				this.x = 0;
 				this.y = 0;
 				this.image = loadImage("game-assets/shuriken-pack-2.png");
-				this.loadSound = createAudio("game-assets/load-missiles.wav");
 			}
 			
 			newShurikenPack(score)
@@ -90,7 +99,7 @@
 					if ( xR == 1 )
 					{
 						console.log('Create a shuriken pack');
-						this.x = Math.floor(Math.random() * 1270); // random X position
+						this.x = Math.floor(Math.random() * 1100); // random X position
 						this.y = 0;
 						image(this.image, this.x, this.y++);
 					}
@@ -111,16 +120,15 @@
 			
 			checkForCollection(samurai) // if a shurikenpack collides with the samurai is collected
 			{
-				// taken by dragon.checkForCollision() -- not very precise yet 
+				// taken by dragon.checkForDamage() -- not very precise yet 
 				if (Math.abs(this.x - samurai.x) < 80 && this.y >= 380 && this.y <= 590)
 				{
 					samurai.addShurikens(3);
 					this.y = 0; // shurikenpack is taken - new shurikenPack may be created
 					//console.log('Shuriken pack is collected!');
-					this.loadSound.play();
+		 
+					Pd.send('collect', []);
 				}
-
-				
 				
 			}
 		}
@@ -135,7 +143,6 @@
 			{
 				this.y = 420;
 				this.image = shurikenImage;
-				this.shurikenThrow = createAudio("game-assets/shuriken-throw.mp3");
 			}
 			
 			fire(samurai)
@@ -201,7 +208,6 @@
 						this.dragonsPassed++; // and the dragon's passage is completed
 					}
 				}
-				
 				this.handleDifficulty();
 			}
 			
@@ -212,14 +218,14 @@
 					this.addNewDragons(1);
 			}
 			
-			checkForCollision(samurai)
+			checkForDamage(samurai)
 			{
 				// not very precise yet
 				for (let i = 0; i < this.dragons.length; i++)
 				{
 					if (Math.abs((this.dragons[i].x + 50) - samurai.x) < 80 && this.dragons[i].y >= 380 && this.dragons[i].y <= 500)
 					{
-						samurai.damageSound.play();
+						//samurai.damageSound.play();
 						return this.dragons[i].explode();
 					}
 				}
@@ -236,7 +242,7 @@
 						{
 							shurikens[z].explode();
 							this.dragonsPassed += 5;
-							return this.dragons[i].detonate();
+							return this.dragons[i].kill();
 						}
 					}
 				}
@@ -253,8 +259,6 @@
 			constructor()
 			{
 				this.image = loadImage("game-assets/samurai.png");
-				this.engineSound = createAudio("game-assets/japan-music.mp3");
-				this.damageSound = createAudio("game-assets/damage-sound.mp3");
 			}
 			
 			display()
@@ -275,15 +279,14 @@
 				}
 			}
 			
-			startEngineSound()
+			startMusicSound()
 			{
-				this.engineSound.play();
-				this.engineSound.loop();
+				console.log("Start sound.");
+				Pd.send('blip',[]);
 			}
 			
-			stopEngineSound()
+			stopMusicSound()
 			{
-				this.engineSound.stop();
 			}
 			
 			addShurikens(howMany)
@@ -297,10 +300,15 @@
 				{
 					let shuriken = new Shuriken();
 					shuriken.fire(this);
-					shuriken.shurikenThrow.play();
+					this.throwSoundPD();
 					this.shurikens--;
 					return shuriken;
 				}
+			}
+
+			throwSoundPD()
+			{
+				Pd.send('throw', []);
 			}
 		}
 		
@@ -363,6 +371,8 @@
 		let shurikens = [];
 		let shurikenPack;
 		
+		let gameSounds; // will load the pure data patch
+		
 		/*
 			P5 functions preload(), setup(), draw() and keyPressed() are used
 		*/
@@ -374,6 +384,11 @@
 			
 			shurikenImage = loadImage("game-assets/shuriken.png");
 			shurikenPack = new ShurikenPack();
+			
+			gameSounds 
+			$.get('game-assets/pure-data-patches/game-patch-2.pd', function(patchStr) {
+				  gameSounds = Pd.loadPatch(patchStr);
+				})
 		}
 		
 		function setup() 
@@ -381,6 +396,8 @@
 			samuraiLives = new SamuraiLives();
 			createCanvas(1280, 591); // canvas size tied to the background-image
 			dragonSwarm = new DragonSwarm(); // it is going to handle the dragons
+			
+			setupTouchScreenControls();
 		}
 		
 		function draw() 
@@ -395,31 +412,36 @@
 						
 			showMessages(); // displays messages (if needed) depending on the game state
 			
+			drawTouchScreenControls();
+			
 			if (startGame && !gameOver && startOnce) // begin a new game
 			{
+				Pd.start();
 				dragonSwarm.reset();
 				dragonSwarm.addNewDragons(2);
-				samurai.startEngineSound();
+				samurai.startMusicSound();
 				samuraiLives.reset();
 				startOnce = false;
 			}
 			
 			if (gameOver) // game over
 			{
-				samurai.stopEngineSound();
+				samurai.stopMusicSound();
+				Pd.stop(); // put in comments if you enable audio with confirm on page load
 				samurai.shurikens = 0;
 			}
+			
 			
 			if (!gameOver && startGame && !paused) // while the game is played
 			{
 				dragonSwarm.handleDragons(); // handle the dragons
 				
-				if (dragonSwarm.checkForCollision(samurai)) // check for collisions - if any then reduceOneLive
+				if (dragonSwarm.checkForDamage(samurai)) // check for damages - if any then reduceOneLive
 				{	
 					samuraiLives.reduceOneLive();
 				}
 				
-				if (dragonSwarm.checkForDetonation(shurikens)) // check for collisions - if any then reduceOneLive
+				if (dragonSwarm.checkForDetonation(shurikens)) // check for damages - if any then reduceOneLive
 				{	
 					//samuraiLives.reduceOneLive();
 				}
@@ -453,6 +475,13 @@
 					shurikens.push(samurai.fireShuriken());
 				}
 				*/
+								
+				//touch-and-orientation-controls
+				samurai.move(getTouchDirectionControl()); // get the touch controls - if any
+				//samurai.move(getOrientationControls()); // get the orientation controls - if any
+				
+				//Pd.send('receive', [spaceship.x]);  // to try this or the following -- for future development
+				//Pd.send('receive', [parseFloat($('#spaceship.x').val())]);
 				
 				shurikenPack.newShurikenPack(dragonSwarm.dragonsPassed);
 				shurikenPack.display();
@@ -468,13 +497,32 @@
 						i--;
 					}
 				}
-				
+			}
+		}
+
+		// function checkIfShootPressed() {
+
+		// 	document.querySelector("body > img:nth-child(8)").addEventListener('click', () => {
+		// 		controllerShootPressed = true;
+		// 		return controllerShootPressed;
+		// 	});
+
+		// 	// setTimeout(() => {
+		// 	// 	return controllerShootPressed;
+		// 	// }, 5);
+		// }
+
+		function mousePressed() {
+			if(controllerShootPressed && throwShurikenTouchPressed()) {
+				let temp = samurai.fireShuriken();
+				if (temp != undefined)
+				shurikens.push(temp);
 			}
 		}
 				
 		function keyPressed()
 		{
-			if (keyIsDown(32)) // space is pressed - fire a shuriken
+			if (keyIsDown(83)) // space is pressed - fire a shuriken
 			{
 				let temp = samurai.fireShuriken();
 				if (temp != undefined)
@@ -496,19 +544,23 @@
 					paused = false;
 					
 				if (paused)
-					samurai.stopEngineSound();
-					
+				{
+					Pd.stop();
+				}
 				if (!paused)
-					samurai.startEngineSound();
+				{
+					Pd.start();
+					samurai.startMusicSound();
+				}
 			}
 		}
 
 		function showMessages()
 		{
 			textSize(27);
-			text("Score: " + dragonSwarm.dragonsPassed, 30, 135); // Score is shown
+			text("Score: " + dragonSwarm.dragonsPassed, 280, 80); // Score is shown
 			
-			text("Shurikens: " + samurai.shurikens, 270, 60); // Score is shown
+			text("Shurikens: " + samurai.shurikens, 280, 45); // Score is shown
 		
 			if (!startGame)
 				rect(280, 280, 700, 140); // rectangle (window) to show the message to start game
@@ -522,7 +574,7 @@
 				text('Press N to start a new game.', 300, 300, 800, 200);
 				textSize(25);
 				text('Use the left and right arrows to avoid the dragons.', 340, 360, 800, 200);
-				text('Get the shurikens and throw by pressing the Space bar!', 340, 390, 800, 200);
+				text('>>> Collect shurikens and throw by pressing S <<<', 340, 390, 800, 200);
 			}
 			
 			if (gameOver)

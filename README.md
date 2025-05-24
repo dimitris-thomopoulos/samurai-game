@@ -31,7 +31,25 @@ The folder game-assets contains the images and sounds used in the game.
 Find the original idea here: https://github.com/vkomianos/p5-asteroids-game.git
 
 ## Play online
-You can play the game <a href="https://dimitris-thomopoulos.github.io/samurai-game/index.html" target="new">online</a>.
+You can play the game <a href="https://dimitris-thomopoulos.github.io/p5-asteroids-game/game.html" target="new">online</a>.
 
 ## Libraries used
 The game uses the [p5 javascript library] (https://p5js.org/) and the [v1.5.0] (https://github.com/processing/p5.js/releases/download/v1.5.0/p5.min.js)is included in this project.
+
+Branched from the pure-data-patches-extended branch and merged with touch-and-orientation-controls 
+
+The game can be played in PC or mobile phone/tablet and used Pure data patch.
+
+PC controls:
+- N for new game
+- P for pause/resume
+- move spaceship with arrows
+- fire with space
+
+Smartphone/tablets:
+- touch controls for all the above except of firing missiles
+- orientation controls (tilt your device) can also be used for spaceship movements
+
+Check the source branches (pure-data-patches-extended, touch-and-orientation-controls) for extended documentation.
+
+The game uses the [p5 javascript library] (https://p5js.org/) and the [v1.5.0] (https://github.com/processing/p5.js/releases/download/v1.5.0/p5.min.js) is included in this project.
