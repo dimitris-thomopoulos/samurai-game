@@ -17,6 +17,7 @@
 				
 				this.image = dragonImage;
 				this.killSound = createAudio("game-assets/dragon-kill.mp3");
+				this.damageSound = createAudio("game-assets/damage-sound.mp3");
 				this.explosionImage = loadImage("game-assets/blood-splatter.png");
 				this.load();
 			}
@@ -52,7 +53,7 @@
 					this.exploded = true;		
 					// this.killSoundPD();
 					this.image = this.explosionImage; // change the asteroid image with explosion
-					this.killSound.play(); // explosion sound
+					this.damageSound.play(); // explosion sound
 					
 					return true; // if explode returns true player loses a life
 
@@ -266,6 +267,7 @@
 			constructor()
 			{
 				this.image = loadImage("game-assets/samurai.png");
+				this.attackSound = createAudio("game-assets/shuriken-throw.mp3");
 			}
 			
 			display()
@@ -311,16 +313,17 @@
 				{
 					let shuriken = new Shuriken();
 					shuriken.fire(this);
-					this.throwSoundPD();
+					this.attackSound.play();
 					this.shurikens--;
 					return shuriken;
 				}
 			}
 
-			throwSoundPD()
-			{
-				Pd.send('throw', []);
-			}
+			// throwSoundPD()
+			// {
+				
+				// Pd.send('throw', []);
+			// }
 		}
 		
 		class SamuraiLives
@@ -396,10 +399,10 @@
 			shurikenImage = loadImage("game-assets/shuriken.png");
 			shurikenPack = new ShurikenPack();
 			
-			gameSounds 
-			$.get('game-assets/pure-data-patches/game-patch-2.pd', function(patchStr) {
-				  gameSounds = Pd.loadPatch(patchStr);
-				})
+			// gameSounds 
+			// $.get('game-assets/pure-data-patches/game-patch-2.pd', function(patchStr) {
+			// 	  gameSounds = Pd.loadPatch(patchStr);
+			// 	})
 		}
 		
 		function setup() 
