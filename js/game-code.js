@@ -16,7 +16,7 @@
 				this.maxSpeed = 12;
 				
 				this.image = dragonImage;
-				this.explosionSound = createAudio("game-assets/dragon-kill.mp3");
+				this.killSound = createAudio("game-assets/dragon-kill.mp3");
 				this.explosionImage = loadImage("game-assets/blood-splatter.png");
 				this.load();
 			}
@@ -50,9 +50,9 @@
 				if (!this.exploded) // each dragon can explode only once
 				{
 					this.exploded = true;		
-					// this.explosionSoundPD();
+					// this.killSoundPD();
 					this.image = this.explosionImage; // change the asteroid image with explosion
-					this.explosionSound.play(); // explosion sound
+					this.killSound.play(); // explosion sound
 					
 					return true; // if explode returns true player loses a life
 
@@ -71,7 +71,7 @@
 				}
 			}
 			
-			explosionSoundPD()
+			killSoundPD()
 			{
 				Pd.send('damage', []);
 			}
