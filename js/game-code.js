@@ -16,6 +16,7 @@
 				this.maxSpeed = 12;
 				
 				this.image = dragonImage;
+				this.explosionSound = createAudio("game-assets/dragon-kill.mp3");
 				this.explosionImage = loadImage("game-assets/blood-splatter.png");
 				this.load();
 			}
@@ -49,7 +50,10 @@
 				if (!this.exploded) // each dragon can explode only once
 				{
 					this.exploded = true;		
-					this.explosionSoundPD();
+					// this.explosionSoundPD();
+					this.image = this.explosionImage; // change the asteroid image with explosion
+					this.explosionSound.play(); // explosion sound
+					
 					return true; // if explode returns true player loses a life
 
 				}
@@ -62,7 +66,7 @@
 					this.exploded = true;
 					this.x += 25;
 					this.image = this.explosionImage; // change the dragon image with explosion
-					this.killSoundPD();
+					this.killSound.play();  // kill sound
 					return true; 
 				}
 			}
@@ -89,6 +93,7 @@
 				this.x = 0;
 				this.y = 0;
 				this.image = loadImage("game-assets/shuriken-pack-2.png");
+				this.loadSound = createAudio("game-assets/load-missiles.wav");
 			}
 			
 			newShurikenPack(score)
@@ -127,7 +132,9 @@
 					this.y = 0; // shurikenpack is taken - new shurikenPack may be created
 					//console.log('Shuriken pack is collected!');
 		 
-					Pd.send('collect', []);
+					// Pd.send('collect', []);
+
+					this.loadSound.play();
 				}
 				
 			}
@@ -264,6 +271,7 @@
 			display()
 			{	
 				image(this.image, this.x, this.y);
+				this.gameMusic = createAudio("game-assets/japan-music.mp3");
 			}
 			
 			move(move)
@@ -282,11 +290,14 @@
 			startMusicSound()
 			{
 				console.log("Start sound.");
-				Pd.send('blip',[]);
+				// Pd.send('blip',[]);
+
+				this.gameMusic.play();
 			}
 			
 			stopMusicSound()
 			{
+				this.gameMusic.stop();
 			}
 			
 			addShurikens(howMany)
@@ -416,7 +427,7 @@
 			
 			if (startGame && !gameOver && startOnce) // begin a new game
 			{
-				Pd.start();
+				// Pd.start();
 				dragonSwarm.reset();
 				dragonSwarm.addNewDragons(2);
 				samurai.startMusicSound();
@@ -427,7 +438,8 @@
 			if (gameOver) // game over
 			{
 				samurai.stopMusicSound();
-				Pd.stop(); // put in comments if you enable audio with confirm on page load
+				// Pd.stop(); // put in comments if you enable audio with confirm on page load
+				
 				samurai.shurikens = 0;
 			}
 			
@@ -545,11 +557,12 @@
 					
 				if (paused)
 				{
-					Pd.stop();
+					// Pd.stop();
+					samurai.stopMusicSound();
 				}
 				if (!paused)
 				{
-					Pd.start();
+					// Pd.start();
 					samurai.startMusicSound();
 				}
 			}
