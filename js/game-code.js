@@ -53,7 +53,8 @@
 				{
 					this.exploded = true;		
 					// this.killSoundPD();
-					this.image = this.damageImage; // change the asteroid image with explosion
+					this.image = this.damageImage; // change the dragon image with burn damage
+					this.x += 25;
 					this.damageSound.play(); // explosion sound
 					
 					return true; // if explode returns true player loses a life
