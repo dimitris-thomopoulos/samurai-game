@@ -19,6 +19,7 @@
 				this.killSound = createAudio("game-assets/dragon-kill.mp3");
 				this.damageSound = createAudio("game-assets/damage-sound.mp3");
 				this.explosionImage = loadImage("game-assets/blood-splatter.png");
+				this.damageImage = loadImage("game-assets/burn-damage.png");
 				this.load();
 			}
 			
@@ -52,7 +53,7 @@
 				{
 					this.exploded = true;		
 					// this.killSoundPD();
-					this.image = this.explosionImage; // change the asteroid image with explosion
+					this.image = this.damageImage; // change the asteroid image with explosion
 					this.damageSound.play(); // explosion sound
 					
 					return true; // if explode returns true player loses a life
