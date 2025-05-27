@@ -269,13 +269,13 @@
 			constructor()
 			{
 				this.image = loadImage("game-assets/samurai.png");
+				this.gameMusic = createAudio("game-assets/japan-music.mp3");
 				this.attackSound = createAudio("game-assets/shuriken-throw.mp3");
 			}
 			
 			display()
 			{	
 				image(this.image, this.x, this.y);
-				this.gameMusic = createAudio("game-assets/japan-music.mp3");
 			}
 			
 			move(move)
@@ -294,9 +294,9 @@
 			startMusicSound()
 			{
 				console.log("Start sound.");
-				// Pd.send('blip',[]);
 
 				this.gameMusic.play();
+				this.gameMusic.loop();
 			}
 			
 			stopMusicSound()
@@ -442,9 +442,7 @@
 			
 			if (gameOver) // game over
 			{
-				samurai.stopMusicSound();
-				// Pd.stop(); // put in comments if you enable audio with confirm on page load
-				
+				samurai.stopMusicSound();				
 				samurai.shurikens = 0;
 			}
 			
